@@ -15,9 +15,9 @@
   roles: 
   - logstash
 
-# - name: Install FileBeat Agent
-#   hosts: web_servers
-#   roles: 
-#   - filebeat
+- name: Install FileBeat Agent
+  hosts: web_servers
+  roles: 
+  - filebeat
   
   
