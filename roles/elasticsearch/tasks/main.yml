@@ -1,0 +1,58 @@
+---
+# tasks file for elasticsearch
+
+# - hosts: Elasticsearch
+  # become: true
+  
+  # become_method: sudo
+  # user: root
+  # tasks:
+  # - name: Useradd elasticsearch
+  #   user:
+  #     name: elasticsearch
+
+  - name: Install java 8
+    yum:
+      name: java
+      state: latest
+    
+  - name: Download GPG-KEY
+    command: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+  - name: Add elasticsearch.repo
+    template:
+      src: elasticsearch.repo
+      dest: /etc/yum.repos.d/elasticsearch.repo
+  
+  - name: Install Elasticsearch
+    yum:
+      name: elasticsearch
+      state: latest
+
+  - name: Add config Elasticsearch
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^#network.host: 192.168.0.1'
+      line: 'network.host: 0.0.0.0'
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 9200/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5044/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Start elasticsearch
+    service:
+      name: elasticsearch
+      state: started
+      enabled: yes

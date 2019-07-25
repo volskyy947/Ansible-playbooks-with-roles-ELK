@@ -1,0 +1,45 @@
+---
+# tasks file for filebeat
+  
+  - name: Download GPG-KEY
+    command: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+  - name: Add elasticsearch.repo
+    template:
+      src: elasticsearch.repo
+      dest: /etc/yum.repos.d/elasticsearch.repo
+  
+  - name: Install Filebeat
+    yum:
+      name: filebeat
+      state: latest
+
+  - name: Add config filebeat
+    template:
+      src: filebeat.yml
+      dest: /etc/filebeat/filebeat.yml
+
+  - name: Load template 
+    command: filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["{{ hostvars[groups.Elasticsearch[0]].ansible_host }}:9200"]'
+  
+  - name: Load template
+    command: filebeat setup -e -E output.logstash.enabled=false -E output.elasticsearch.hosts=['{{ hostvars[groups.Elasticsearch[0]].ansible_host }}:9200'] -E setup.kibana.host={{ hostvars[groups.Kibana[0]].ansible_host }}:5601
+
+  - name: Add config filebeat
+    template:
+      src: filebeat1.yml
+      dest: /etc/filebeat/filebeat.yml
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5044/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Start filebeat
+    service:
+      name: filebeat
+      state: started
+      enabled: yes

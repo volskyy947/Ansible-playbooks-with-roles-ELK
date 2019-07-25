@@ -1,0 +1,65 @@
+---
+# tasks file for logstash
+
+  - name: Install java 8
+    yum:
+      name: java
+      state: latest
+
+  - name: Download GPG-KEY
+    command: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+  - name: Add logstash.repo
+    template:
+      src: logstash.repo
+      dest: /etc/yum.repos.d/logstash.repo
+  
+  - name: Install Logstash
+    yum:
+      name: logstash
+      state: latest
+
+  - name: Add beats_input.conf
+    template:
+      src: 02-beats-input.conf
+      dest: /etc/logstash/conf.d/02-beats-input.conf
+
+  - name: Add syslog-filter
+    template:
+      src: 10-syslog-filter.conf
+      dest: /etc/logstash/conf.d/10-syslog-filter.conf
+    
+  - name: Add elasticsearch-output.conf
+    template:
+      src: 30-elasticsearch-output.conf
+      dest: /etc/logstash/conf.d/30-elasticsearch-output.conf
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5044/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 9200/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5601/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Start logstash
+    service:
+      name: logstash
+      state: started
+      enabled: yes

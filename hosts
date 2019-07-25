@@ -1,0 +1,12 @@
+[Elasticsearch]
+server01 ansible_host=10.26.34.239 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+[Kibana]
+server02 ansible_host=10.26.34.86 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+[Logstash]
+server03 ansible_host=10.26.34.128 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+
+[web_servers]
+Filebeat_agent1 ansible_host=10.26.34.65 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+Filebeat_agent2 ansible_host=10.26.34.203 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+Filebeat_agent3 ansible_host=10.26.34.142 ansible_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+

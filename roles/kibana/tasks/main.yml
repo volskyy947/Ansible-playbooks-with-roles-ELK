@@ -1,0 +1,85 @@
+---
+
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+
+  - name: Add epel-release repo
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Start NGiNX
+    service:
+      daemon_reload: yes
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: Start and enable firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+      port: 80/tcp
+      permanent: true
+      state: enabled
+      immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Download GPG-KEY
+    command: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+  - name: Add kibana.repo
+    template:
+      src: kibana.repo
+      dest: /etc/yum.repos.d/kibana.repo
+  
+  - name: Install Kibana
+    yum:
+      name: kibana
+      state: latest
+
+  - name: Edit kibana.yml
+    template:
+      src: kibana.yml
+      dest: /etc/kibana/kibana.yml
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5601/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 9200/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+
+  - name: Open port on the firewall
+    firewalld:
+       port: 5044/tcp
+       permanent: true
+       state: enabled
+       immediate: yes
+    when: ansible_service_mgr == "systemd"
+  
+  - name: Start kibana
+    service:
+      name: kibana
+      state: started
+      enabled: yes
