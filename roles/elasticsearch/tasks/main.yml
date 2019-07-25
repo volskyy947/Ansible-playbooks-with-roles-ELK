@@ -1,16 +1,6 @@
 ---
 # tasks file for elasticsearch
 
-# - hosts: Elasticsearch
-  # become: true
-  
-  # become_method: sudo
-  # user: root
-  # tasks:
-  # - name: Useradd elasticsearch
-  #   user:
-  #     name: elasticsearch
-
   - name: Install java 8
     yum:
       name: java
