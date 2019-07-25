@@ -1,23 +1,23 @@
 ---
 
-# - name: Install ElasticSearch
-#   hosts: Elasticsearch
-#   roles: 
-#   - elasticsearch
-
-# - name: Install Kibana
-#   hosts: Kibana
-#   roles: 
-#   - kibana
-
-# - name: Install Logstash
-#   hosts: Logstash
-#   roles: 
-#   - logstash
-
-- name: Install FileBeat Agent
-  hosts: web_servers
+- name: Install ElasticSearch
+  hosts: Elasticsearch
   roles: 
-  - filebeat
+  - elasticsearch
+
+- name: Install Kibana
+  hosts: Kibana
+  roles: 
+  - kibana
+
+- name: Install Logstash
+  hosts: Logstash
+  roles: 
+  - logstash
+
+# - name: Install FileBeat Agent
+#   hosts: web_servers
+#   roles: 
+#   - filebeat
   
   
